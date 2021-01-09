@@ -15,6 +15,7 @@ public class TodoView {
     public TodoView() {
     }
 
+
     public Long getId() {
         return id;
     }
@@ -47,23 +48,34 @@ public class TodoView {
         isDone = done;
     }
 
-    public boolean hasBeenModified(){
+    public boolean hasBeenModified() {
         return Objects.nonNull(this.getTargetDate()) ||
                 Objects.nonNull(this.isDone()) ||
                 Objects.nonNull(this.getDescription());
     }
 
-    public void patch(Todo todo){
-        if(Objects.nonNull(this.getDescription())){
+    public void patch(Todo todo) {
+        if (Objects.nonNull(this.getDescription())) {
             todo.setDescription(this.getDescription());
         }
-        if(Objects.nonNull(this.getTargetDate())){
+        if (Objects.nonNull(this.getTargetDate())) {
             todo.setTargetDate(this.getTargetDate());
         }
-        if(Objects.nonNull(this.isDone())){
+        if (Objects.nonNull(this.isDone())) {
             todo.setDone(this.isDone());
         }
     }
+
+
+    public Todo viewToModel() {
+        Todo todo = new Todo();
+        todo.setId(this.id);
+        todo.setDescription(this.description);
+        todo.setTargetDate(this.targetDate);
+        todo.setDone(this.isDone);
+        return todo;
+    }
+
 
     @Override
     public String toString() {

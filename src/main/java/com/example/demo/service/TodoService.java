@@ -7,13 +7,13 @@ import java.util.Optional;
 
 public interface TodoService {
 
-    Optional<Todo> getTodoById(long id);
+    Optional<Todo> getTodoById(Long id) throws Exception;
 
-    Todo update(Todo todo);
+    Todo update(Todo todo) throws Exception;
 
     Todo addTodo(Todo todo);
 
-    void deleteById(Long id);
+    void deleteById(Long id) throws Exception;
 
-    List<Todo> getAllTodos();
+    List<Todo> getAllTodos() throws Exception;
 }

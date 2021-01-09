@@ -12,17 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.client.HttpClientErrorException;
+
 
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -60,9 +60,13 @@ class TodoControllerTest {
     @Test
     @Order(3)
     void getTodoById() {
-        Todo todo = restTemplate
-                .getForObject(LOCAL + port + "/todos/1", Todo.class);
-        Assert.assertNotNull(todo);
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity httpEntity = new HttpEntity(headers);
+        ResponseEntity<Todo> responseTodo = restTemplate
+                .getForEntity(LOCAL + port + "/todos/1", Todo.class);
+        Assert.assertNotNull(responseTodo.getBody());
+        Assert.assertEquals(HttpStatus.OK, responseTodo.getStatusCode());
+        Assert.assertEquals(1l, (long) responseTodo.getBody().getId());
     }
 
 
@@ -85,33 +89,41 @@ class TodoControllerTest {
     void patchTodo() {
         Todo response = restTemplate.getForObject(LOCAL + port + "/todos/1", Todo.class);
         Assert.assertNotNull(response);
-        Assert.assertFalse(response.isDone());
+        Assert.assertTrue(response.isDone());
 
         Todo patchObj = new Todo();
         patchObj.setId(response.getId());
-        patchObj.setDone(true);
+        patchObj.setDone(false);
 
         restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory(HttpClientBuilder.create().build()));
         String result = restTemplate.patchForObject(LOCAL + port + "/todos", patchObj, String.class);
         Assert.assertNotNull(result);
-        Assert.assertEquals(result, "resource updated");
 
         response = restTemplate.getForObject(LOCAL + port + "/todos/1", Todo.class);
         Assert.assertNotNull(response);
-        Assert.assertTrue(response.isDone());
+        Assert.assertFalse(response.isDone());
     }
 
-    @Test
     @Order(6)
+    @Test
     void deleteById() {
-        Todo todo = restTemplate
-                .getForObject(LOCAL + port + "/todos/1", Todo.class);
-        Assert.assertNotNull(todo);
-        restTemplate.delete(LOCAL + port + "/todos/1");
-        try {
-            todo = restTemplate.getForObject(LOCAL + port + "/todos/1", Todo.class);
-        } catch (final HttpClientErrorException e) {
-            assertEquals(e.getStatusCode(), HttpStatus.NOT_FOUND);
-        }
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.add(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded");
+
+        HttpEntity httpEntity = new HttpEntity(headers);
+
+        ResponseEntity<Todo> responseTodo = restTemplate.getForEntity(LOCAL + port + "/todos/1", Todo.class);
+        Assert.assertNotNull(responseTodo);
+        Assert.assertEquals(1l, (long) responseTodo.getBody().getId());
+
+        ResponseEntity<String> response = restTemplate.exchange(LOCAL + port + "/todos/1", HttpMethod.DELETE, httpEntity, String.class);
+        Assert.assertEquals(response.getBody(), "resource deleted");
+        Assert.assertEquals(response.getStatusCode(), HttpStatus.OK);
+
+        ResponseEntity<Todo> responseTodoAfterDel = restTemplate.getForEntity(LOCAL + port + "/todos/1", Todo.class);
+        Assert.assertEquals(Optional.empty(), responseTodoAfterDel);
+//        Assert.assertEquals();
+
     }
 }
