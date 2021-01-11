@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.constant.Message;
 import com.example.demo.model.Todo;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.Assert;
@@ -22,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -110,7 +111,6 @@ class TodoControllerTest {
         HttpHeaders headers = new HttpHeaders();
 
         headers.add(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded");
-
         HttpEntity httpEntity = new HttpEntity(headers);
 
         ResponseEntity<Todo> responseTodo = restTemplate.getForEntity(LOCAL + port + "/todos/1", Todo.class);
@@ -121,9 +121,8 @@ class TodoControllerTest {
         Assert.assertEquals(response.getBody(), "resource deleted");
         Assert.assertEquals(response.getStatusCode(), HttpStatus.OK);
 
-        ResponseEntity<Todo> responseTodoAfterDel = restTemplate.getForEntity(LOCAL + port + "/todos/1", Todo.class);
-        Assert.assertEquals(Optional.empty(), responseTodoAfterDel);
-//        Assert.assertEquals();
-
+        ResponseEntity<String> message = restTemplate.getForEntity(LOCAL + port + "/todos/1", String.class);
+        assertNotNull(message);
+        assertEquals(Message.Id_NOT_EXIST, message.getBody());
     }
 }
