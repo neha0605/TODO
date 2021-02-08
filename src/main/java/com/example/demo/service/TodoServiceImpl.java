@@ -3,11 +3,9 @@ package com.example.demo.service;
 import com.example.demo.constant.Message;
 import com.example.demo.model.Todo;
 import com.example.demo.repo.TodoRepository;
-import com.example.demo.views.TodoView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -61,6 +59,29 @@ public class TodoServiceImpl implements TodoService {
             throw new Exception(Message.NO_TODO_Present);
         }
         return allTodos;
+    }
+
+    @Override
+    public List<Todo> getTodosByUser(Long id) {
+        logger.debug("todo by user is:");
+        List<Todo> todoByUser = todoRepository.findTodoByUser(id);
+        if (todoByUser == null || todoByUser.size() == 0) try {
+            throw new Exception(Message.NO_TODO_Present);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return todoByUser;
+    }
+
+    @Override
+    public List<Todo> getTodosByUserName(String name) {
+        List<Todo> todoByUser = todoRepository.findByUserName(name);
+        if (todoByUser == null || todoByUser.size() == 0) try {
+            throw new Exception(Message.NO_TODO_Present);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return todoByUser;
     }
 }
 

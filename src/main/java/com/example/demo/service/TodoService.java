@@ -16,4 +16,10 @@ public interface TodoService {
     void deleteById(Long id) throws Exception;
 
     List<Todo> getAllTodos() throws Exception;
+
+    List<Todo> getTodosByUser(Long id);
+
+    List<Todo> getTodosByUserName(String name);
+
+
 }

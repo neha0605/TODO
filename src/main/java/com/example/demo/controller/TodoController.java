@@ -127,4 +127,9 @@ public class TodoController {
         logger.debug(Message.RESOURCE_DELETED);
         return new ResponseEntity(Message.RESOURCE_DELETED, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/{name}", method = RequestMethod.GET)
+    public ResponseEntity<List<Todo>> getTodosByUserName(@RequestBody Todo todo) {
+        return null;
+    }
 }
