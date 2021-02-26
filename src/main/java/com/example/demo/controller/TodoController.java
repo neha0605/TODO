@@ -3,14 +3,21 @@ package com.example.demo.controller;
 import com.example.demo.constant.Message;
 import com.example.demo.model.Todo;
 import com.example.demo.service.TodoService;
+import com.example.demo.service.UserDetail;
+import com.example.demo.service.UserService;
+import com.example.demo.service.UserServiceImpl;
 import com.example.demo.views.TodoView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -18,7 +25,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/todos")
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin(origins = "*")
 public class TodoController {
 
     @Autowired
@@ -55,9 +62,14 @@ public class TodoController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<TodoView> addTodo(@RequestBody TodoView todoView) {
+    public ResponseEntity<TodoView> addTodo(@RequestBody TodoView todoView, HttpServletRequest request) {
+        Object details = SecurityContextHolder.getContext().getAuthentication().getDetails();
+        System.out.println(details);
+        Principal userPrincipal = request.getUserPrincipal();
+        System.out.println(userPrincipal.getName());
         logger.info("adding todo:");
         Todo todo = todoView.viewToModel();
+
         Todo persistedTodo = todoService.addTodo(todo);
         return ResponseEntity.status(HttpStatus.OK).body(persistedTodo.modelToView());
     }
@@ -128,7 +140,7 @@ public class TodoController {
         return new ResponseEntity(Message.RESOURCE_DELETED, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{name}", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/{name}", method = RequestMethod.GET)
     public ResponseEntity<List<Todo>> getTodosByUserName(@RequestBody Todo todo) {
         return null;
     }

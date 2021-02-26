@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories
 @EnableJpaAuditing
 public class DemoApplication implements CommandLineRunner {
+
     @Value(value = "${spring.datasource.url}")
      String dbName;
 

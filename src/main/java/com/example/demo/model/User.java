@@ -20,6 +20,9 @@ public class User {
 
     private String name;
 
+    private String email;
+    private String password;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -34,6 +37,11 @@ public class User {
     private List<Todo> todos;
 
     public User() {
+    }
+    public User(String username, String email, String password) {
+        this.name = username;
+        this.email = email;
+        this.password = password;
     }
 
     public Long getUserId() {
@@ -68,14 +76,28 @@ public class User {
         this.todos = todos;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public String toString() {
         return "User{" +
-                "id=" + userId +
+                "userId=" + userId +
                 ", name='" + name + '\'' +
-                ", createdOn=" + createdOn +
-                ", modifiedOn=" + modifiedOn +
-                ", todos=" + todos +
+                ", email='" + email + '\'' +
                 '}';
     }
 }

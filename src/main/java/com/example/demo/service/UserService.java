@@ -1,14 +1,17 @@
 package com.example.demo.service;
 
 import com.example.demo.model.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface UserService {
-    public List<User> getAllUser();
+public interface UserService extends UserDetailsService {
 
-    public Optional<User> getUserById(Long id);
+    List<User> getAllUser();
 
-    public User createUser(User user);
+    Optional<User> getUserById(Long id);
+
+    User createUser(User user);
+
 }

@@ -13,8 +13,9 @@ import java.util.Optional;
 @RestController
 @RequestMapping(value = "/user")
 public class UserController {
+
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @RequestMapping(method = RequestMethod.GET)
     public List<User> getAllUser() {
