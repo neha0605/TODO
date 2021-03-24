@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.constant.Message;
 import com.example.demo.model.Todo;
+import com.example.demo.model.User;
 import com.example.demo.service.TodoService;
 import com.example.demo.service.UserDetail;
 import com.example.demo.service.UserService;
@@ -10,6 +11,7 @@ import com.example.demo.views.TodoView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,6 +33,8 @@ public class TodoController {
 
     @Autowired
     private TodoService todoService;
+    @Autowired
+    private UserService userService;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -63,13 +68,11 @@ public class TodoController {
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<TodoView> addTodo(@RequestBody TodoView todoView, HttpServletRequest request) {
-        Object details = SecurityContextHolder.getContext().getAuthentication().getDetails();
-        System.out.println(details);
-        Principal userPrincipal = request.getUserPrincipal();
-        System.out.println(userPrincipal.getName());
+        String name = request.getUserPrincipal().getName();
+        Optional<User> user = userService.getUserByName(name);
         logger.info("adding todo:");
         Todo todo = todoView.viewToModel();
-
+        todo.setUser(user.get());
         Todo persistedTodo = todoService.addTodo(todo);
         return ResponseEntity.status(HttpStatus.OK).body(persistedTodo.modelToView());
     }
@@ -140,8 +143,17 @@ public class TodoController {
         return new ResponseEntity(Message.RESOURCE_DELETED, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/user/{name}", method = RequestMethod.GET)
-    public ResponseEntity<List<Todo>> getTodosByUserName(@RequestBody Todo todo) {
-        return null;
+//    @RequestMapping(value = "/user/{name}", method = RequestMethod.GET)
+//    public ResponseEntity<List<Todo>> getTodosByUserName(@PathVariable String name) {
+//        List<Todo> todosByUserName = todoService.getTodosByUserName(name);
+//        todosByUserName.stream().forEach(System.out::println);
+//        return ResponseEntity.status(HttpStatus.OK).body(todosByUserName);
+//    }
+
+    @RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
+    public ResponseEntity<List<Todo>> getTodosByUserId(@PathVariable Long userId) {
+        List<Todo> todosByUserId = todoService.getTodosByUser(userId);
+        todosByUserId.stream().forEach(System.out::println);
+        return ResponseEntity.status(HttpStatus.OK).body(todosByUserId);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.demo.views;
 
 import com.example.demo.model.Todo;
+import com.example.demo.model.User;
 
 import java.util.Date;
 import java.util.Objects;
@@ -11,6 +12,7 @@ public class TodoView {
     private String description;
     private Date targetDate;
     private Boolean isDone;
+    private User user;
 
     public TodoView() {
     }
@@ -46,6 +48,18 @@ public class TodoView {
 
     public void setDone(Boolean done) {
         isDone = done;
+    }
+
+    public Boolean getDone() {
+        return isDone;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public boolean hasBeenModified() {

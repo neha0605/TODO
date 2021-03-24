@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.constant.Message;
 import com.example.demo.model.Todo;
+import com.example.demo.model.User;
 import com.example.demo.repo.TodoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,9 @@ public class TodoServiceImpl implements TodoService {
 
     @Autowired
     private TodoRepository todoRepository;
+
+    @Autowired
+    private UserService userService;
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -62,9 +66,14 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public List<Todo> getTodosByUser(Long id) {
+    public List<Todo> getTodosByUser(Long userId) {
         logger.debug("todo by user is:");
-        List<Todo> todoByUser = todoRepository.findTodoByUser(id);
+//        Optional<User> userById = userService.getUserById(userId);
+//        if(!userById.isPresent()){
+//            throw new RuntimeException("UserId does not exists");
+//        }
+
+        List<Todo> todoByUser = todoRepository.findByUserUserId(userId);
         if (todoByUser == null || todoByUser.size() == 0) try {
             throw new Exception(Message.NO_TODO_Present);
         } catch (Exception e) {

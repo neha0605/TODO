@@ -12,6 +12,8 @@ public interface UserService extends UserDetailsService {
 
     Optional<User> getUserById(Long id);
 
+    Optional<User> getUserByName(String name);
+
     User createUser(User user);
 
 }

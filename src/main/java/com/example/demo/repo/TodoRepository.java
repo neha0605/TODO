@@ -2,6 +2,7 @@ package com.example.demo.repo;
 
 
 import com.example.demo.model.Todo;
+import com.example.demo.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -21,7 +22,11 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
 
     Todo getOne(Long id);
 
-    List<Todo> findTodoByUser(Long id);
+    List<Todo> findByUser(User userId);
+
+    List<Todo> findByUserUserId(Long userId);
 
     List<Todo> findByUserName(String user);
+
+
 }
